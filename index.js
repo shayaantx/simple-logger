@@ -7,12 +7,11 @@ const {
 class SimpleLogger {
   constructor(config = {}) {
     this.config = {
-      level: config.level || 'info',
-      format: config.format || 'text',
       slackWebhookUrl: config.slackWebhookUrl || '',
       awsRegion: config.awsRegion || '',
       awsEventBusName: config.awsEventBusName || '',
       awsMaxRetries: config.awsMaxRetries || 5,
+      logToConsole: config.logToConsole || false
     };
 
     if (this.config.slackWebhookUrl) {
@@ -21,7 +20,7 @@ class SimpleLogger {
     if (this.config.awsRegion) {
       this.eventBridgeClient = new EventBridgeClient({
         region: this.config.awsRegion,
-        maxAttempts: this.awsMaxRetries,
+        maxAttempts: this.config.awsMaxRetries,
         retryDelayOptions: {base: 500}
       });
     }
@@ -33,16 +32,42 @@ class SimpleLogger {
     }
   }
 
-  async aws(message, detailType) {
+  async info(message, context = {}) {
+    if (this.config.logToConsole) {
+      console.log(message, context);
+    }
+    if (this.eventBridgeClient) {
+      this.aws(message, "INFO", context);
+    }
+    if (this.slackClient) {
+      this.slack(message, "INFO", context, "#D3D3D3", ":info:");
+    }
+  }
+
+  async error(message, context = {}) {
+    if (this.config.logToConsole) {
+      console.log(message, context);
+    }
+    if (this.eventBridgeClient) {
+      this.aws(message, "ERROR", context);
+    }
+    if (this.slackClient) {
+      this.slack(message, "ERROR", context, "#FF5733", ":alert:");
+    }
+  }
+
+  async aws(message, type, context = {}) {
     // All four of the Entries properties are required.
     // The source must match the EventBusName.
     const logPayload = {
       Entries: [
         {
-          DetailType: `${detailType}`,
-          Detail: JSON.stringify(message),
-          EventBusName: `${this.awsEventBusName}`,
-          Source: `${this.awsEventBusName}`,
+          DetailType: `${type}`,
+          Detail: JSON.stringify({
+            message, context
+          }),
+          EventBusName: `${this.config.awsEventBusName}`,
+          Source: `${this.config.awsEventBusName}`,
         },
       ],
     };
@@ -50,15 +75,13 @@ class SimpleLogger {
     await this.eventBridgeClient.send(new PutEventsCommand(logPayload));
   }
 
-  async slack(message, type, context = {}) {
-    console.log(message, context);
-  
+  async slack(message, type, context = {}, color, emoji) {
     await this.slackClient.send({
       text: `${type}\n`,
-      icon_emoji: ":alert:",
+      icon_emoji: emoji,
       attachments: [
         {
-          color: "#FF5733",
+          color,
           fields: [
             { title: "Message", value: message, short: true },
             {

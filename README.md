@@ -12,7 +12,7 @@ If you want to use slack pass a slack web hook url
 const logger = new SimpleLogger({
   slackWebhookUrl: "https://slackthis.com",
 });
-await logger.slack("omg", "Failure");
+await logger.info("omg", "Failure");
 ```
 
 ### AWS
@@ -25,5 +25,5 @@ const logger = new SimplerLogger({
   awsRegion: "us-east-2",
   awsEventBusName: "SomeEventBus",
 });
-await logger.aws("Job Ran", "Success");
+await logger.info("Job Ran", "Success");
 ```
