@@ -11,7 +11,8 @@ class SimpleLogger {
       awsRegion: config.awsRegion || '',
       awsEventBusName: config.awsEventBusName || '',
       awsMaxRetries: config.awsMaxRetries || 5,
-      logToConsole: config.logToConsole || false
+      logToConsole: config.logToConsole || false,
+      commonContext: config.commonContext || {}
     };
 
     if (this.config.slackWebhookUrl) {
@@ -59,12 +60,13 @@ class SimpleLogger {
   async aws(message, type, context = {}) {
     // All four of the Entries properties are required.
     // The source must match the EventBusName.
+    const commonContext = this.config.commonContext;
     const logPayload = {
       Entries: [
         {
           DetailType: `${type}`,
           Detail: JSON.stringify({
-            message, context
+            message, context: {...context, commonContext}
           }),
           EventBusName: `${this.config.awsEventBusName}`,
           Source: `${this.config.awsEventBusName}`,
@@ -76,6 +78,7 @@ class SimpleLogger {
   }
 
   async slack(message, type, context = {}, color, emoji) {
+    const commonContext = this.config.commonContext;
     await this.slackClient.send({
       text: `${type}\n`,
       icon_emoji: emoji,
@@ -86,7 +89,7 @@ class SimpleLogger {
             { title: "Message", value: message, short: true },
             {
               title: "Context",
-              value: JSON.stringify(context, null, 4),
+              value: JSON.stringify({...context, commonContext}, null, 4),
               short: false,
             },
           ],

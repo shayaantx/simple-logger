@@ -15,4 +15,6 @@ export interface SimpleLoggerOptions {
   // the event bus to send log events to
   awsEventBusName?: string;
   logToConsole?: boolean;
+  // extra contextual data to log
+  commonContext?: {};
 }
