@@ -1,6 +1,6 @@
 # Simple Logger
 
-This is a super simpler logger that lets you log to either AWS or slack
+This is a super simpler logger that lets you log to either AWS or slack that I primarily use with for Auth0 actions.
 
 ## Configuration
 
