@@ -4,15 +4,21 @@ const {
   PutEventsCommand,
 } = require("@aws-sdk/client-eventbridge");
 
+const createRequestId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+
 class SimpleLogger {
   constructor(config = {}) {
+    let commonContext = config.commonContext || {};
+    if (config.enableRequestId) {
+      commonContext = {...context, requestId: createRequestId()}
+    }
     this.config = {
       slackWebhookUrl: config.slackWebhookUrl || '',
       awsRegion: config.awsRegion || '',
       awsEventBusName: config.awsEventBusName || '',
       awsMaxRetries: config.awsMaxRetries || 5,
       logToConsole: config.logToConsole || false,
-      commonContext: config.commonContext || {}
+      commonContext
     };
 
     if (this.config.slackWebhookUrl) {

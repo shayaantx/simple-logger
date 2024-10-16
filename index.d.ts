@@ -17,4 +17,6 @@ export interface SimpleLoggerOptions {
   logToConsole?: boolean;
   // extra contextual data to log
   commonContext?: {};
+  // whether to append a unique request id to every request
+  enableRequestId?: boolean;
 }
