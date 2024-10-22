@@ -6,6 +6,77 @@ const {
 
 const createRequestId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
 
+class BatchLogEntries {
+  #message;
+  #context;
+  constructor(message, context) {
+    this.message = message;
+    this.context = context;
+  }
+}
+
+class BatchLogger {
+  #logger;
+  #logs;
+
+  constructor(config = {}) {
+    this.logger = new SimpleLogger(config);
+    this.logs = [];
+  }
+  
+  info(message, context = {}) {
+    this.logs.push(new BatchLogEntries(message, context));
+  }
+
+  error(message, context = {}) {
+    this.logs.push(new BatchLogEntries(message, context));
+  }
+
+  async write() {
+    const batches = this._createBatches(this.logs);
+    for (const batch of batches) {
+      
+    }
+  }
+
+  async aws(entries) {
+    const logPayload = {
+      Entries: entries,
+    };
+  
+    await this.eventBridgeClient.send(new PutEventsCommand(logPayload));
+  }
+
+  _createAwsPayload(entries) {
+    //TODO: 
+  }
+
+  _createBatches(entries) {
+    const batches = [];
+    let currentBatch = [];
+    let currentSize = 0;
+
+    for (const event of entries) {
+      const eventSize = JSON.stringify(event).length;
+
+      if ((currentSize + eventSize) > (256 * 1024)) { // 256 KB
+        batches.push(currentBatch);
+        currentBatch = [];
+        currentSize = 0;
+      }
+
+      currentBatch.push(event);
+      currentSize += eventSize;
+    }
+
+    if (currentBatch.length > 0) {
+      batches.push(currentBatch);
+    }
+
+    return batches;
+  }
+}
+
 class SimpleLogger {
   constructor(config = {}) {
     let commonContext = config.commonContext || {};
@@ -107,4 +178,6 @@ class SimpleLogger {
   }
 }
 
-module.exports = SimpleLogger;
+module.exports = {
+  SimpleLogger
+};
