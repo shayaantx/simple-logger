@@ -27,3 +27,22 @@ const logger = new SimplerLogger({
 });
 await logger.info("Job Ran", "Success");
 ```
+
+### AWS (Batch Logging)
+
+Batch logging to AWS is possible by instantiating a `BatchLogger`.
+
+```js
+const logger = new BatchLogger({
+  awsRegion: "us-east-2",
+  awsEventBusName: "SomeEventBus",
+});
+try {
+  logger.info("starting foo", {job_id: "bar"})
+  // ... stuff happens
+} catch(e) {
+  logger.error("foo failed", {job_id: "bar", error: e.message})
+} finally {
+  await logger.write();
+}
+```
