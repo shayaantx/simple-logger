@@ -48,6 +48,10 @@ class BatchLogger {
     this.logs = [];
   }
 
+  destroy() {
+    this.logger.eventBridgeClient.destroy();
+  }
+
   /**
    * Creates a log entry at log level INFO.
    *
@@ -140,8 +144,10 @@ class BatchLogger {
 
     for (const event of entries) {
       const eventSize = JSON.stringify(event).length;
+      const tooManyEntries = currentBatch.length > 9;
+      const payloadTooLarge = (currentSize + eventSize) > (256 * 1024) // 256KB
 
-      if ((currentSize + eventSize) > (256 * 1024)) { // 256 KB
+      if (tooManyEntries || payloadTooLarge) {
         batches.push(currentBatch);
         currentBatch = [];
         currentSize = 0;

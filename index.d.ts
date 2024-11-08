@@ -45,8 +45,10 @@ export interface BatchLoggerOptions {
 export class SimpleLogger {
   constructor(options?: SimpleLoggerOptions);
   destroy(): void;
+  aws(message: string, logLevel: LogLevel, context?: {}): Promise<void>;
   info(message: string, context?: {}): Promise<void>;
   error(message: string, context?: {}): Promise<void>;
+  slack(message: string, logLevel: LogLevel, context?: {}, color: string, emoji: string): Promise<void>;
 }
 
 export interface SimpleLoggerOptions {
