@@ -22,6 +22,7 @@ describe("BatchLogger Unit Tests", () => {
     logger.error("foo-error");
     await logger.write();
     expect(EventBridgeClient.prototype.send).toHaveBeenCalled();
+    expect(logger.logger.config.commonContext.requestId).toBeDefined();
   });
   it("create single batch if less than 256KB total", async () => {
     const logger = new BatchLogger({awsRegion: "us-east-2", awsEventBusName: "batch-logger-event-bus"})

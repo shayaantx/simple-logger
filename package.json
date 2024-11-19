@@ -1,6 +1,6 @@
 {
   "name": "@shayaantx/simple-logger",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "This is a super simpler logger that lets you log to either AWS or slack",
   "repository": {
     "type": "git",

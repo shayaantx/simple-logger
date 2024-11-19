@@ -60,7 +60,11 @@ class BatchLogger {
    */
   info(message, context = {}) {
     if (this.logger.config.logToConsole) {
-      console.log(LogLevelInfo, message, context);
+      const consoleContext = {
+        ...context,
+        ...this.logger.config.commonContext
+      }
+      console.log(LogLevelInfo, message, consoleContext);
     }
 
     this.logs.push(new BatchLogEntry(message, LogLevelInfo, context));
@@ -74,7 +78,11 @@ class BatchLogger {
    */
   error(message, context = {}) {
     if (this.logger.config.logToConsole) {
-      console.log(LogLevelError, message, context);
+      const consoleContext = {
+        ...context,
+        ...this.logger.config.commonContext
+      }
+      console.log(LogLevelInfo, message, consoleContext);
     }
 
     this.logs.push(new BatchLogEntry(message, LogLevelError, context));
@@ -110,7 +118,7 @@ class BatchLogger {
    * @return {{Entries: Array<{DetailType: string, Detail: string, EventBusName: string, Source: string}>}}
    */
   _createAWSPayload(entries) {
-    const commonContext = this.logger.commonContext;
+    const commonContext = this.logger.config.commonContext;
     const eventBusName = this.logger.config.awsEventBusName;
 
     const awsInnerPayload = entries.map(entry => {
