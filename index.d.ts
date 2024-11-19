@@ -21,6 +21,7 @@ export class AWSPayload {
 
 export class BatchLogger {
   logs: BatchLogEntry[];
+  logger: SimpleLogger;
   constructor(options?: BatchLoggerOptions);
   destroy(): void;
   info(message: string, context?: {}): void;
@@ -44,6 +45,7 @@ export interface BatchLoggerOptions {
 
 export class SimpleLogger {
   constructor(options?: SimpleLoggerOptions);
+  config: {commonContext: {requestId?: string}};
   destroy(): void;
   aws(message: string, logLevel: LogLevel, context?: {}): Promise<void>;
   info(message: string, context?: {}): Promise<void>;
