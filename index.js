@@ -188,7 +188,6 @@ class SimpleLogger {
       logToConsole: config.logToConsole || false,
       commonContext
     };
-    console.log(this.config);
 
     if (this.config.slackWebhookUrl) {
       this.slackClient = SlackNotify(this.config.slackWebhookUrl);
