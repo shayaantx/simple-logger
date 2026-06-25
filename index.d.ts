@@ -1,5 +1,7 @@
 // index.d.ts
 
+import { AwsCredentialIdentityProvider } from "@smithy/types";
+
 export type LogLevel =
   "INFO" | "ERROR";
 
@@ -36,6 +38,8 @@ export interface BatchLoggerOptions {
   awsRegion: string;
   // the event bus to send log events to
   awsEventBusName: string;
+  // provide an optional AWS custom credential provider
+  awsCustomCredentialProvider?: AwsCredentialIdentityProvider;
   logToConsole?: boolean;
   // extra contextual data to log
   commonContext?: {};
@@ -60,6 +64,8 @@ export interface SimpleLoggerOptions {
   awsRegion?: string;
   // the event bus to send log events to
   awsEventBusName?: string;
+  // provide an optional AWS custom credential provider
+  awsCustomCredentialProvider?: AwsCredentialIdentityProvider;
   logToConsole?: boolean;
   // extra contextual data to log
   commonContext?: {};

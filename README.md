@@ -17,13 +17,16 @@ await logger.info("omg", "Failure");
 
 ### AWS
 
-If you want to use aws, you should already have your aws profile or credentials configured on machine running the logger (as atm there is nothing to take an access key/secret in config)
+If you want to use aws, you should already have your aws profile or credentials configured on machine running the logger.
+The logger may optionally accept a custom credential provider.
+See [the AWS SDK documentation](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-credential-providers/#credentials-provider) on credential providers.
 
 
 ```js
 const logger = new SimplerLogger({
   awsRegion: "us-east-2",
   awsEventBusName: "SomeEventBus",
+  awsCustomCredentialProvider: MyCustomCredentialProvider,
 });
 await logger.info("Job Ran", "Success");
 ```
