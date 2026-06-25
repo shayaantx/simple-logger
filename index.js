@@ -181,12 +181,14 @@ class SimpleLogger {
     }
     this.config = {
       slackWebhookUrl: config.slackWebhookUrl || '',
+      awsCustomCredentialProvider: config.awsCustomCredentialProvider,
       awsRegion: config.awsRegion || '',
       awsEventBusName: config.awsEventBusName || '',
       awsMaxRetries: config.awsMaxRetries || 5,
       logToConsole: config.logToConsole || false,
       commonContext
     };
+    console.log(this.config);
 
     if (this.config.slackWebhookUrl) {
       this.slackClient = SlackNotify(this.config.slackWebhookUrl);
@@ -195,7 +197,8 @@ class SimpleLogger {
       this.eventBridgeClient = new EventBridgeClient({
         region: this.config.awsRegion,
         maxAttempts: this.config.awsMaxRetries,
-        retryDelayOptions: { base: 500 }
+        retryDelayOptions: { base: 500 },
+        credentials: this.config.awsCustomCredentialProvider,
       });
     }
   }
